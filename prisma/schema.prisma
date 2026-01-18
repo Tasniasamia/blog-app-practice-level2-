@@ -76,6 +76,10 @@ model User {
   twofactors       TwoFactor[]
   status           UserStatus @default(ACTIVE)
   role              UserRole @default(USER)
+  banned           Boolean?
+  banReason        String?
+  banExpires       DateTime?
+
   @@unique([email])
   @@map("user")
 }
@@ -90,7 +94,7 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+impersonatedBy String?
   @@unique([token])
   @@index([userId])
   @@map("session")

@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "../../generated/prisma/client";
 import { customSession, twoFactor } from "better-auth/plugins"
 import nodemailer from 'nodemailer';
+import { admin } from "better-auth/plugins"
 
 
 const prisma = new PrismaClient();
@@ -21,6 +22,14 @@ export const auth = betterAuth({
         provider: "postgresql", // or "mysql", "postgresql", ...etc
     }),
     trustedOrigins:['http://localhost:3000'],
+    socialProviders: {
+      google: { 
+        accessType: "offline", 
+        prompt: "select_account consent", 
+        clientId: process.env.GOOGLE_CLIENT_ID as string, 
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
+      }, 
+  },
     emailAndPassword:{
         enabled:true,
         requireEmailVerification: true,
