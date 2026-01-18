@@ -1,0 +1,141 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model comments {
+  id             Int           @id @default(autoincrement())
+  content        String
+  authorId       Int
+  postId         Int
+  parentId       Int?
+  status         CommentStatus @default(APPROVED)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime
+  comments       comments?     @relation("commentsTocomments", fields: [parentId], references: [id])
+  other_comments comments[]    @relation("commentsTocomments")
+  posts          posts         @relation(fields: [postId], references: [id])
+
+  @@index([authorId])
+  @@index([parentId])
+  @@index([postId])
+}
+
+model posts {
+  id         Int        @id @default(autoincrement())
+  title      String     @db.VarChar(255)
+  content    String
+  thumbnail  String?
+  isFeatured Boolean    @default(false)
+  status     PostStatus @default(PUBLISHED)
+  tags       String[]
+  views      Int        @default(0)
+  authId     String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime    @updatedAt
+  comments   comments[]
+
+  @@index([authId])
+}
+
+enum CommentStatus {
+  APPROVED
+  REJECT
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+enum UserRole{
+  ADMIN
+  USER
+}
+enum UserStatus{
+  ACTIVE
+  INACTIVE
+}
+model User {
+  id               String      @id
+  name             String
+  email            String
+  emailVerified    Boolean     @default(false)
+  image            String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  twoFactorEnabled Boolean?    @default(true)
+  sessions         Session[]
+  accounts         Account[]
+  twofactors       TwoFactor[]
+  status           UserStatus @default(ACTIVE)
+  role              UserRole @default(USER)
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model TwoFactor {
+  id          String @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([secret])
+  @@index([userId])
+  @@map("twoFactor")
+}
