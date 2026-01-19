@@ -83,28 +83,30 @@ import { prisma } from "../../lib/prisma";
     if (authId) {
       anyConditions.push({ authId });
     }
-    const allPost = await prisma.posts.findMany({
-      skip: skip,
-      take: limit,
-      orderBy:
-        sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
-      where: { AND: anyConditions },
-      include:{
-        _count: {
-          select: { comments: true },
-        },
-      }
-    });
+    const allPost = await prisma.posts.findMany(
+    //   {
+    //   skip: skip,
+    //   take: limit,
+    //   orderBy:
+    //     sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
+    //   where: { AND: anyConditions },
+    //   include:{
+    //     _count: {
+    //       select: { comments: true },
+    //     },
+    //   }
+    // }
+  );
     const total = await prisma.posts.count({
       where: { AND: anyConditions },
     });
     return {
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
+      // pagination: {
+      //   total,
+      //   page,
+      //   limit,
+      //   totalPages: Math.ceil(total / limit),
+      // },
   
       data: allPost,
     };

@@ -60,7 +60,7 @@ const getAllPost = async (req: Request, res: Response) => {
       sortOrder
     });
     res.status(200).json({
-      success: true,
+      // success: true,
       ...result
     });
   } catch (error) {
