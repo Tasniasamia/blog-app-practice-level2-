@@ -106,7 +106,6 @@ export const auth = betterAuth({
             },
           });          
           return {
-              roles,
               user: {
                   ...user,
                   role:roles[0]?.role,
