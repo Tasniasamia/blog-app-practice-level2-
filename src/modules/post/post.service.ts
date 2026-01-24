@@ -97,6 +97,7 @@ import { prisma } from "../../lib/prisma";
       }
     }
   );
+  console.log("allPost",allPost);
     const total = await prisma.posts.count({
       where: { AND: anyConditions },
     });

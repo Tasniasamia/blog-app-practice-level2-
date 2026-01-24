@@ -47,6 +47,7 @@ const getAllPost = async (req: Request, res: Response) => {
     const Id = authId as string;
     //generate pagination
     const {page,limit,skip,sortBy,sortOrder}= paginationSortingHelper(req.query);
+    console.log(req?.query);
    const result = await postService.getAllPost({
       search: searchString,
       tags: tagsArray,
@@ -59,6 +60,7 @@ const getAllPost = async (req: Request, res: Response) => {
       sortBy,
       sortOrder
     });
+    console.log("getAllPost",result);
     res.status(200).json({
       // success: true,
       ...result
