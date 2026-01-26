@@ -4,6 +4,8 @@ import { auth } from './lib/auth';
 import { toNodeHandler } from "better-auth/node";
 import { json } from 'node:stream/consumers';
 import { postRouter } from './modules/post/post.route';
+import notFound from './middleware/notFound';
+import errorHandler from './middleware/globalErrorHandler';
 
 const app=express();
 
@@ -12,6 +14,8 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use('/post',postRouter);
+app.use(notFound);
+app.use(errorHandler);
 // app.post('/signup',async(req:Request,res:Response)=>{
 //     const {email,  password, name,  image,  callbackURL}=await req?.body;
 //     const response = await auth.api.signUpEmail({

@@ -6,6 +6,7 @@ import type { NextFunction, Request, Response } from "express";
 
 const createPost = async (req: Request, res: Response,next:NextFunction) => {
   try {
+    console.log("post data into controller",req.body);
     const result = await postService.createPost(
       req.body as Omit<posts, "id" | "createdAt" | "updatedAt">,
       req?.user?.id as string

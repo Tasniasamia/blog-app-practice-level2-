@@ -19,7 +19,9 @@ import { prisma } from "../../lib/prisma";
     Post: Omit<posts, "id" | "createdAt" | "updatedAt">,
     id: string
   ) => {
+    console.log("postdata",Post);
     const result = await prisma.posts.create({ data: { ...Post, authId: id } });
+    console.log("result",result);
     return result;
   };
   const getAllPost = async ({
